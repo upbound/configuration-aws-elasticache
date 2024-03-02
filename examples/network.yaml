@@ -1,0 +1,9 @@
+---
+apiVersion: elasticache.aws.platform.upbound.io/v1alpha1
+kind: Network
+metadata:
+  name: elasticache-network
+spec:
+  parameters:
+    id: elasticache-network
+    region: us-west-2

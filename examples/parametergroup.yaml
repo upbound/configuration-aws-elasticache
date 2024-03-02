@@ -1,0 +1,14 @@
+apiVersion: elasticache.aws.platform.upbound.io/v1alpha1
+kind: ParameterGroup
+metadata:
+  name: elasticache-parameter-group-redis-7
+spec:
+  parameters:
+    family: redis7 # redis2.8
+    name: cache-params
+    parameter:
+      - name: activerehashing
+        value: "yes"
+      - name: min-slaves-to-write
+        value: "2"
+    region: us-west-2

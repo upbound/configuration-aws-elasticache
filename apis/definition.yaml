@@ -1,0 +1,254 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xcaches.elasticache.aws.platform.upbound.io
+spec:
+  group: elasticache.aws.platform.upbound.io
+  names:
+    kind: XCache
+    plural: xcaches
+  claimNames:
+    kind: Cache
+    plural: caches
+  defaultCompositionRef:
+    name: cache.elasticache.aws.platform.upbound.io
+  connectionSecretKeys:
+    - username
+    - password
+    - endpoint
+    - port
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                parameters:
+                  description: >-
+                    Upbound Platform Elasticache Cache
+                  properties:
+                    deletionPolicy:
+                      description: Defaults to Delete
+                      enum:
+                        - Delete
+                        - Orphan
+                      type: string
+                      default: Delete
+                    availabilityZone:
+                      description: >-
+                        Availability Zone for the cache cluster.
+                        If you want to create cache nodes in multi-az,
+                        use preferred_availability_zones instead.
+                        Default is the System chosen Availability Zone.
+                        Changing this value will re-create the resource.
+                      type: string
+                    applyImmediately:
+                      description: >-
+                        A value that indicates whether the modifications in this
+                        request and any pending modifications are asynchronously
+                        applied as soon as possible, regardless of the
+                        PreferredMaintenanceWindow setting for the DB cluster.
+                      type: boolean
+                      default: true
+                    autoMinorVersionUpgrade:
+                      description: >-
+                        A value that indicates whether minor engine upgrades
+                        are applied automatically to the DB cluster during
+                        the maintenance window.
+                      type: boolean
+                      default: true
+                    azMode:
+                      description: >-
+                        Whether the nodes in this Memcached node group are
+                        created in a single Availability Zone or created
+                        across multiple Availability Zones in the cluster's region.
+                        Valid values for this parameter are single-az or cross-az,
+                        default is single-az. If you want to choose cross-az,
+                        num_cache_nodes must be greater than 1.
+                      type: string
+                      default: single-az
+                    engine:
+                      description: >-
+                        Name of the cache engine to be used for this cache
+                        cluster. Valid values are memcached or redis.
+                        Default is redis.
+                      type: string
+                      default: redis
+                    engineVersion:
+                      description: >-
+                        Version number of the cache engine to be used.
+                        If not set, defaults to the latest version.
+                        See Describe Cache Engine Versions in the
+                        AWS Documentation for supported versions.
+                        When engine is redis and the version is 7 or higher,
+                        the major and minor version should be set, e.g., 7.2.
+                        When the version is 6, the major and minor version can
+                        be set, e.g., 6.2, or the minor version can be unspecified
+                        which will use the latest version at creation time,
+                        e.g., 6.x. Otherwise, specify the full version desired,
+                        e.g., 5.0.6. The actual engine version used is returned in
+                        the attribute engine_version_actual, see Attribute
+                        Reference below. Cannot be provided with
+                        replication_group_id.
+                      type: string
+                      default: "7"
+                    family:
+                      description: >-
+                        The family of the ElastiCache parameter group.
+                      type: string
+                      default: redis7
+                    finalSnapshotIdentifier:
+                      description: >-
+                        Name of your final cluster snapshot. If omitted, no
+                        final snapshot will be made.
+                      type: string
+                    id:
+                      description: >-
+                        The id of the cache.
+                      type: string
+                    logDeliveryConfiguration:
+                      description: >-
+                        Specifies the destination and format of Redis SLOWLOG or
+                        Redis Engine Log. See the documentation on Amazon
+                        ElastiCache. See Log Delivery Configuration below
+                        for more details.
+                      destination:
+                        description: >-
+                          Name of either the CloudWatch Logs LogGroup or
+                          Kinesis Data Firehose resource.
+                        type: string
+                      destinationType:
+                        description: >-
+                          For CloudWatch Logs use cloudwatch-logs or for
+                          Kinesis Data Firehose use kinesis-firehose.
+                        type: string
+                      logFormat:
+                        description: >-
+                          Valid values are json or text.
+                          Default is json.
+                        type: string
+                        default: json
+                      logType:
+                        description: >-
+                          Valid values are slow-log or engine-log. Max 1 of each.
+                          Default is engine-log.
+                        type: string
+                        default: engine-log
+                      type: object
+                    maintenanceWindow:
+                      description: >-
+                        ddd:hh24:mi (24H Clock UTC).
+                        The minimum maintenance window is a 60 minute period.
+                        Defaults to Sat:16:00-Sat:19:00.
+                      type: string
+                      default: Sat:16:00-Sat:19:00
+                    name:
+                      description: >-
+                        The name for am automatically created elasticache
+                        on cluster creation - of up to 64 alphanumeric characters.
+                      type: string
+                    nodeType:
+                      description: >-
+                        Instance type of Elasticache nodes.
+                      type: string
+                      default: cache.t2.micro
+                    numCacheNodes:
+                      description: >-
+                        The initial number of cache nodes that the cache
+                        cluster will have. For Redis, this value must be 1.
+                        For Memcached, this value must be between 1 and 40.
+                        If this number is reduced on subsequent runs,
+                        the highest numbered nodes will be removed.
+                      type: integer
+                      default: 1
+                    parameterGroupParams:
+                      description: >-
+                        A list of ElastiCache parameters to apply.
+                      items:
+                        properties:
+                          name:
+                            description: >-
+                              The name of an ElastiCache parameter group
+                              parameter.
+                            type: string
+                          value:
+                            description:
+                              The value of an ElastiCache parameter group
+                              parameter.
+                            type: string
+                        type: object
+                      type: array
+                    region:
+                      type: string
+                    snapshotArns:
+                      description: >-
+                        Element string list containing an Amazon Resource
+                        Name (ARN) of a Redis RDB snapshot file stored in
+                        Amazon S3. The object name cannot contain any commas.
+                        Changing snapshot_arns forces a new resource.
+                      items:
+                        type: string
+                      type: array
+                    snapshotName:
+                      description: >-
+                        Name of a snapshot from which to restore data into the
+                        new node group. Changing snapshot_name forces a new
+                        resource.
+                      type: string
+                    snapshotRetentionLimit:
+                      description: >-
+                        Number of days for which ElastiCache will retain automatic
+                        cache cluster snapshots before deleting them.
+                        For example, if you set SnapshotRetentionLimit to 5,
+                        then a snapshot that was taken today will be retained for
+                        5 days before being deleted. If the value of
+                        SnapshotRetentionLimit is set to zero (0) which is the
+                        default, backups are turned off.
+                        Please note that setting a
+                        snapshot_retention_limit is not supported on
+                        cache.t1.micro cache nodes.
+                      type: integer
+                      default: 0
+                    snapshotWindow:
+                      description: >-
+                        Daily time range (in UTC) during which ElastiCache
+                        will begin taking a daily snapshot of your cache cluster.
+                        Defaults to 09:00-10:00.
+                      type: string
+                      default: 09:00-10:00
+                    tags:
+                      additionalProperties:
+                        type: string
+                      description: Key-value map of resource tags.
+                      type: object
+                    providerConfigName:
+                      description: >-
+                        Crossplane ProviderConfig to use for
+                        provisioning the resources.
+                      type: string
+                      default: default
+                  required:
+                    - deletionPolicy
+                    - id
+                    - providerConfigName
+                    - region
+                  type: object
+              required:
+                - parameters
+            status:
+              properties:
+                elasticacheCache:
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                elasticacheNetwork:
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                elasticacheSubnetGroup:
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true

@@ -1,0 +1,12 @@
+apiVersion: elasticache.aws.platform.upbound.io/v1alpha1
+kind: Cache
+metadata:
+  name: cache
+  namespace: default
+spec:
+  parameters:
+    id: cache
+    engine: redis
+    engineVersion: "7"
+    nodeType: cache.t3.micro
+    region: us-west-2

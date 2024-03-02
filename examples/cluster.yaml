@@ -1,0 +1,24 @@
+apiVersion: elasticache.aws.platform.upbound.io/v1alpha1
+kind: Cluster
+metadata:
+  name: elasticache-cluster
+  namespace: default
+spec:
+    parameters:
+      engine: redis
+      nodeType: cache.t2.micro
+      numCacheNodes: 1
+      parameterGroupName: default.redis7
+      port: 6379
+      region: us-west-2
+      securityGroupIds:
+        - <YOUR_SG>, e.g. sg-0f001fbd79f89f539
+      # alternatively a securityGroupIdSelector can be used as follows
+      # securityGroupIdSelector:
+      #   matchLabels:
+      #     testing.upbound.io/example-name: sg
+      subnetGroupName: <YOUR_SUBNET_GROUPNAME, e.g. elasticache-network-2jbtl-cbl5z
+      # alternatively a subnetGroupNameSelector can be used as follows
+      # subnetGroupNameSelector:
+      #   matchLabels:
+      #     testing.upbound.io/example-name: elasticache-subnetgroup

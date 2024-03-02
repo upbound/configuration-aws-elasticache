@@ -1,0 +1,67 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xnetworks.elasticache.aws.platform.upbound.io
+spec:
+  group: elasticache.aws.platform.upbound.io
+  names:
+    kind: XNetwork
+    plural: xnetworks
+  claimNames:
+    kind: Network
+    plural: networks
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                parameters:
+                  description: >-
+                    Elasticache Network Parameters
+                  properties:
+                    id:
+                      description: >-
+                        Identity of the Elasticache Network.
+                      type: string
+                    region:
+                      description: >-
+                        Region where resouces are created.
+                      type: string
+                    deletionPolicy:
+                      description: >-
+                        Delete the external resources when the
+                        Claim/XR is deleted. Defaults to Delete.
+                      type: string
+                      enum:
+                        - Delete
+                        - Orphan
+                      default: Delete
+                    providerConfigName:
+                      description: >-
+                        Crossplane ProviderConfig to use for
+                        provisioning the resources.
+                      type: string
+                      default: default
+                  required:
+                    - deletionPolicy
+                    - providerConfigName
+                    - id
+                    - region
+                  type: object
+              required:
+                - parameters
+            status:
+              properties:
+                elasticacheNetwork:
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                elasticacheSubnetGroup:
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
