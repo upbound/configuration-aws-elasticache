@@ -1,0 +1,140 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: cluster.elasticache.aws.platform.upbound.io
+  labels:
+    provider: aws
+spec:
+  writeConnectionSecretsToNamespace: upbound-system
+  compositeTypeRef:
+    apiVersion: elasticache.aws.platform.upbound.io/v1alpha1
+    kind: XCluster
+
+  mode: Pipeline
+  pipeline:
+    - step: patch-and-transform
+      functionRef:
+        name: crossplane-contrib-function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        resources:
+          - name: cluster
+            base:
+              apiVersion: elasticache.aws.upbound.io/v1beta1
+              kind: Cluster
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.providerConfigName
+                toFieldPath: spec.providerConfigRef.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.deletionPolicy
+                toFieldPath: spec.deletionPolicy
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.region
+                toFieldPath: spec.forProvider.region
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.tags
+                toFieldPath: spec.forProvider.tags
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.uid
+                toFieldPath: spec.writeConnectionSecretToRef.name
+                transforms:
+                  - type: string
+                    string:
+                      fmt: '%s-elasticache-cluster'
+                      type: Format
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.writeConnectionSecretToRef.namespace
+                toFieldPath: spec.writeConnectionSecretToRef.namespace
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.applyImmediately
+                toFieldPath: spec.forProvider.applyImmediately
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.autoMinorVersionUpgrade
+                toFieldPath: spec.forProvider.autoMinorVersionUpgrade
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.availabilityZone
+                toFieldPath: spec.forProvider.availabilityZone
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.azMode
+                toFieldPath: spec.forProvider.azMode
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.numCacheNodes
+                toFieldPath: spec.forProvider.numCacheNodes
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.engine
+                toFieldPath: spec.forProvider.engine
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.engineVersion
+                toFieldPath: spec.forProvider.engineVersion
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.finalSnapshotIdentifier
+                toFieldPath: spec.forProvider.finalSnapshotIdentifier
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.ipDiscovery
+                toFieldPath: spec.forProvider.ipDiscovery
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.logDeliveryConfiguration
+                toFieldPath: spec.forProvider.logDeliveryConfiguration
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.maintenanceWindow
+                toFieldPath: spec.maintenanceWindow
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.networkType
+                toFieldPath: spec.forProvider.networkType
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.nodeType
+                toFieldPath: spec.forProvider.nodeType
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.notificationTopicArn
+                toFieldPath: spec.forProvider.notificationTopicArn
+
+                # This number has to be 1 for Redis
+                # or 1 - 40 for memcached
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.numCacheNodes
+                toFieldPath: spec.forProvider.numCacheNodes
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.parameterGroupName
+                toFieldPath: spec.forProvider.parameterGroupName
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.parameterGroupNameRef
+                toFieldPath: spec.forProvider.parameterGroupNameRef
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.parameterGroupNameSelector
+                toFieldPath: spec.parameterGroupNameSelector
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.securityGroupIdRefs
+                toFieldPath: spec.securityGroupIdRefs
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.securityGroupIdSelector
+                toFieldPath: spec.forProvider.securityGroupIdSelector
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.securityGroupIds
+                toFieldPath: spec.forProvider.securityGroupIds
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.snapshotArns
+                toFieldPath: spec.forProvider.snapshotArns
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.snapshotName
+                toFieldPath: spec.forProvider.snapshotName
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.snapshotRetentionLimit
+                toFieldPath: spec.snapshotRetentionLimit
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.snapshotWindow
+                toFieldPath: spec.forProvider.snapshotWindow
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.subnetGroupName
+                toFieldPath: spec.forProvider.subnetGroupName
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.subnetGroupNameRef
+                toFieldPath: spec.forProvider.subnetGroupNameRef
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.subnetGroupNameSelector
+                toFieldPath: spec.subnetGroupNameSelector
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider
+                toFieldPath: status.elasticacheCluster

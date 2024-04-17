@@ -1,0 +1,88 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xnetworks.elasticache.aws.platform.upbound.io
+  labels:
+    provider: aws
+spec:
+  compositeTypeRef:
+    apiVersion: elasticache.aws.platform.upbound.io/v1alpha1
+    kind: XNetwork
+
+  mode: Pipeline
+  pipeline:
+    - step: patch-and-transform
+      functionRef:
+        name: crossplane-contrib-function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        resources:
+          - name: elasticache-network-foundation
+            base:
+              apiVersion: aws.platform.upbound.io/v1alpha1
+              kind: XNetwork
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.providerConfigName
+                toFieldPath: spec.parameters.providerConfigName
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.deletionPolicy
+                toFieldPath: spec.parameters.deletionPolicy
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.id
+                toFieldPath: spec.parameters.id
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.region
+                toFieldPath: spec.parameters.region
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.vpcId
+                toFieldPath: status.elasticacheNetwork.vpcId
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.publicSubnetIds
+                toFieldPath: status.elasticacheNetwork.publicSubnetIds
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.privateSubnetIds
+                toFieldPath: status.elasticacheNetwork.privateSubnetIds
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.securityGroupIds
+                toFieldPath: status.elasticacheNetwork.securityGroupIds
+
+          - name: subnet-group
+            base:
+              apiVersion: elasticache.aws.upbound.io/v1beta1
+              kind: SubnetGroup
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.providerConfigName
+                toFieldPath: spec.providerConfigRef.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.deletionPolicy
+                toFieldPath: spec.deletionPolicy
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.region
+                toFieldPath: spec.forProvider.region
+              - type: FromCompositeFieldPath
+                fromFieldPath: status.elasticacheNetwork.privateSubnetIds
+                toFieldPath: spec.forProvider.subnetIds
+                policy:
+                  fromFieldPath: Required
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.arn
+                toFieldPath: status.elasticacheSubnetGroup.arn
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.description
+                toFieldPath: status.elasticacheSubnetGroup.description
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.id
+                toFieldPath: status.elasticacheSubnetGroup.id
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.subnetIds
+                toFieldPath: status.elasticacheSubnetGroup.subnetIds
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.tags
+                toFieldPath: status.elasticacheSubnetGroup.tags
+              - type: ToCompositeFieldPath
+                fromFieldPath: statys.atProvider.tagsAll
+                toFieldPath: status.elasticacheSubnetGroup.tagsAll

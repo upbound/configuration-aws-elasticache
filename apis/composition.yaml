@@ -1,0 +1,114 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: cache.elasticache.aws.platform.upbound.io
+  labels:
+    provider: aws
+spec:
+  compositeTypeRef:
+    apiVersion: elasticache.aws.platform.upbound.io/v1alpha1
+    kind: XCache
+
+  mode: Pipeline
+  pipeline:
+    - step: patch-and-transform
+      functionRef:
+        name: crossplane-contrib-function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        patchSets:
+          - name: common-parameters
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.providerConfigName
+                toFieldPath: spec.parameters.providerConfigName
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.deletionPolicy
+                toFieldPath: spec.parameters.deletionPolicy
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.region
+                toFieldPath: spec.parameters.region
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.tags
+                toFieldPath: spec.parameters.tags
+
+        resources:
+          - name: xParameterGroup
+            base:
+              apiVersion: elasticache.aws.platform.upbound.io/v1alpha1
+              kind: XParameterGroup
+            patches:
+              - type: PatchSet
+                patchSetName: common-parameters
+              - type: CombineFromComposite
+                combine:
+                  variables:
+                    - fromFieldPath: spec.parameters.id
+                    - fromFieldPath: spec.parameters.family
+                  strategy: string
+                  string:
+                    fmt: "%s-%s"
+                toFieldPath: spec.parameters.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.family
+                toFieldPath: spec.parameters.family
+
+          - name: xNetwork
+            base:
+              apiVersion: elasticache.aws.platform.upbound.io/v1alpha1
+              kind: XNetwork
+            patches:
+              - type: PatchSet
+                patchSetName: common-parameters
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.id
+                toFieldPath: spec.parameters.id
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.elasticacheNetwork.securityGroupIds
+                toFieldPath: status.elasticacheNetwork.securityGroupIds
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.elasticacheSubnetGroup.id
+                toFieldPath: status.elasticacheSubnetGroup.id
+
+          - name: xCluster
+            base:
+              apiVersion: elasticache.aws.platform.upbound.io/v1alpha1
+              kind: XCluster
+              spec:
+                parameters: {}
+            patches:
+              - type: PatchSet
+                patchSetName: common-parameters
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.engine
+                toFieldPath: spec.parameters.engine
+              - type: CombineFromComposite
+                combine:
+                  variables:
+                    - fromFieldPath: spec.parameters.id
+                    - fromFieldPath: spec.parameters.family
+                  strategy: string
+                  string:
+                    fmt: "%s-%s"
+                toFieldPath: spec.parameters.parameterGroupName
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.applyImmediately
+                toFieldPath: spec.parameters.applyImmediately
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.availabilityZone
+                toFieldPath: spec.parameters.availabilityZone
+              - type: FromCompositeFieldPath
+                fromFieldPath: status.elasticacheNetwork.securityGroupIds
+                toFieldPath: spec.parameters.securityGroupIds
+                policy:
+                  fromFieldPath: Required
+              - type: FromCompositeFieldPath
+                fromFieldPath: status.elasticacheSubnetGroup.id
+                toFieldPath: spec.parameters.subnetGroupName
+                policy:
+                  fromFieldPath: Required
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.nodeType
+                toFieldPath: spec.parameters.nodeType

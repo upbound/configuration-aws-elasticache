@@ -1,0 +1,404 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xclusters.elasticache.aws.platform.upbound.io
+spec:
+  group: elasticache.aws.platform.upbound.io
+  names:
+    kind: XCluster
+    plural: xclusters
+  claimNames:
+    kind: Cluster
+    plural: clusters
+  connectionSecretKeys:
+    - username
+    - password
+    - endpoint
+    - host
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                parameters:
+                  description: >-
+                    ElastiCache Cluster
+                  properties:
+                    deletionPolicy:
+                      description: >-
+                        Defaults to Delete.
+                      enum:
+                        - Delete
+                        - Orphan
+                      type: string
+                      default: Delete
+                    applyImmediately:
+                      description: >-
+                        Whether any database modifications
+                        are applied immediately, or during
+                        the next maintenance window. Default
+                        is true. See Amazon ElastiCache
+                        Documentation for more information..
+                      type: boolean
+                      default: true
+                    autoMinorVersionUpgrade:
+                      description: >-
+                        Specifies whether minor version engine
+                        upgrades will be applied automatically to
+                        the underlying Cache Cluster instances
+                        during the maintenance window. Only supported
+                        for engine type "redis" and if the engine
+                        version is 6 or higher. Defaults to true.
+                      type: string
+                    availabilityZone:
+                      description: >-
+                        Availability Zone for the cache cluster.
+                        If you want to create cache nodes in multi-az,
+                        use preferred_availability_zones instead.
+                        Default: System chosen Availability Zone.
+                        Changing this value will re-create the resource.
+                      type: string
+                    azMode:
+                      description: >-
+                        Whether the nodes in this Memcached node
+                        group are created in a single Availability
+                        Zone or created across multiple Availability
+                        Zones in the cluster's region. Valid values
+                        for this parameter are single-az or cross-az,
+                        default is single-az. If you want to choose
+                        cross-az, num_cache_nodes must be greater than 1.
+                      type: string
+                    engine:
+                      description: >-
+                        Name of the cache engine to be used for
+                        this cache cluster. Valid values are
+                        memcached or redis. Defaults to redis.
+                      type: string
+                      default: redis
+                    engineVersion:
+                      description: >-
+                        Version number of the cache engine to be used.
+                        If not set, defaults to the latest version.
+                        See Describe Cache Engine Versions in the AWS
+                        Documentation for supported versions. When
+                        engine is redis and the version is 7 or higher,
+                        the major and minor version should be set, e.g.,
+                        7.2. When the version is 6, the major and minor
+                        version can be set, e.g., 6.2, or the minor
+                        version can be unspecified which will use the
+                        latest version at creation time, e.g., 6.x.
+                        Otherwise, specify the full version desired,
+                        e.g., 5.0.6. The actual engine version used
+                        is returned in the attribute engine_version_actual,
+                        see Attribute Reference below. Cannot be
+                        provided with replication_group_id.
+                      type: string
+                    finalSnapshotIdentifier:
+                      description: >-
+                        Name of your final cluster snapshot.
+                        If omitted, no final snapshot will be made.
+                      type: string
+                    ipDiscovery:
+                      description: >-
+                        The IP version to advertise in the
+                        discovery protocol. Valid values are ipv4 or ipv6.
+                        Defaults to ipv4.
+                      type: string
+                      default: ipv4
+                    logDeliveryConfiguration:
+                      description: >-
+                        Specifies the destination and format of Redis
+                        SLOWLOG or Redis Engine Log. See the documentation
+                        on Amazon ElastiCache. See Log Delivery
+                        Configuration below for more details.
+                      items:
+                        properties:
+                          destination:
+                            description: >-
+                              Name of either the CloudWatch Logs
+                              LogGroup or Kinesis Data Firehose resource.
+                            type: string
+                          destinationType:
+                            description: >-
+                              For CloudWatch Logs use cloudwatch-logs
+                              or for Kinesis Data Firehose use
+                              kinesis-firehose.
+                            type: string
+                          logFormat:
+                            description: >-
+                              Valid values are json or text.
+                              Defaults to json.
+                            type: string
+                            default: json
+                          logType:
+                            description: >-
+                              Valid values are slow-log or engine-log.
+                              Max 1 of each. Defaults to engine-log.
+                            type: string
+                            default: engine-log
+                        type: object
+                      type: array
+                    maintenanceWindow:
+                      description: >-
+                        ddd:hh24:mi (24H Clock UTC).
+                        The minimum maintenance window is a
+                        60 minute period.
+                        Example: sun:05:00-sun:09:00.
+                      type: string
+                    networkType:
+                      desription: >-
+                        The IP versions for cache cluster connections.
+                        IPv6 is supported with Redis engine 6.2 onword
+                        or Memcached version 1.6.6 for all Nitro system
+                        instances. Valid values are ipv4, ipv6 or dual_stack.
+                        Defaults to ipv4.
+                      type: string
+                      default: ipv4
+                    nodeType:
+                      type: string
+                    notificationTopicArn:
+                      description: >-
+                        east-1:012345678999:my_sns_topic.
+                      type: string
+                    numCacheNodes:
+                      desription: >-
+                        The initial number of cache nodes that the
+                        cache cluster will have. For Redis, this
+                        value must be 1. For Memcached, this value
+                        must be between 1 and 40. If this number
+                        is reduced on subsequent runs, the highest
+                        numbered nodes will be removed. Defaults to 1.
+                      type: integer
+                      default: 1
+                    parameterGroupName:
+                      description: >-
+                        The name of the parameter group to
+                        associate with this cache cluster.
+                      type: string
+                    parameterGroupNameRefs:
+                      description: >-
+                        Reference to a ParameterGroup in
+                        elasticache to populate parameterGroupName.
+                      name:
+                        description: >-
+                          Name of the referenced object.
+                        type: string
+                      policy:
+                        description: >-
+                          Policies for referencing.
+                        resolution:
+                          description: >-
+                            Resolution specifies whether resolution of this
+                            reference is required. The default is 'Required',
+                            which means the reconcile will fail if the reference
+                            cannot be resolved. 'Optional' means this reference
+                            will be a no-op if it cannot be resolved.
+                          type: string
+                        resolve:
+                          description: >-
+                            Resolve specifies when this reference should
+                            be resolved. The default is 'IfNotPresent',
+                            which will attempt to resolve the reference
+                            only when the corresponding field is not present.
+                            Use 'Always' to resolve the reference on every
+                            reconcile.
+                          type: string
+                      type: object
+                    parameterGroupNameSelector:
+                      description: >-
+                        Selector for a ParameterGroup in elasticache
+                        to populate parameterGroupName.
+                      matchControllerRef:
+                        description: >-
+                          MatchControllerRef ensures an object with the
+                          same controller reference as the selecting object
+                          is selected.
+                        type: boolean
+                      matchLabels:
+                        description: >-
+                          MatchLabels ensures an object with
+                          matching labels is selected.
+                        type: object
+                      policy:
+                        description: >-
+                          Policies for selection.
+                        resolution:
+                          description: >-
+                            Resolution specifies whether resolution of this
+                            reference is required. The default is 'Required',
+                            which means the reconcile will fail if the
+                            reference cannot be resolved. 'Optional' means this
+                            reference will be a no-op if it cannot be resolved.
+                          type: string
+                        resolve:
+                          description: >-
+                            Resolve specifies when this reference should be
+                            resolved. The default is 'IfNotPresent', which
+                            will attempt to resolve the reference only when
+                            the corresponding field is not present. Use 'Always'
+                            to resolve the reference on every reconcile.
+                          type: string
+                      type: object
+                    port:
+                      description: >-
+                        Elasticache port 6379 for Redis or 11211 for Memcached.
+                        6379 is the default.
+                      type: integer
+                      enum:
+                        - 6379
+                        - 11211
+                      default: 6379
+                    region:
+                      description: >-
+                        Region is the region you'd like your
+                        resource to be created in.
+                      type: string
+                    securityGroupIds:
+                      description: >-
+                        One or more VPC security groups associated
+                        with the cache cluster. Cannot be provided
+                        with replication_group_id.
+                      items:
+                        type: string
+                      type: array
+                    snapshotArns:
+                      description: >-
+                        Element string list containing an Amazon Resource
+                        Name (ARN) of a Redis RDB snapshot file stored in
+                        Amazon S3. The object name cannot contain any commas.
+                        Changing snapshot_arns forces a new resource.
+                      items:
+                        type: string
+                      type: array
+                    snapshotName:
+                      description: >-
+                        Name of a snapshot from which to restore data
+                        into the new node group. Changing snapshot_name
+                        forces a new resource.
+                      type: string
+                    snapshotRetentionLimit:
+                      description: >-
+                        Number of days for which ElastiCache will
+                        retain automatic cache cluster snapshots
+                        before deleting them. For example, if you
+                        set SnapshotRetentionLimit to 5, then a
+                        snapshot that was taken today will be retained
+                        for 5 days before being deleted. If the value
+                        of SnapshotRetentionLimit is set to zero (0),
+                        backups are turned off. Please note that setting
+                        a snapshot_retention_limit is not supported on
+                        cache.t1.micro cache nodes
+                      type: integer
+                    snapshotWindow:
+                      description: >-
+                        Daily time range (in UTC) during which
+                        ElastiCache will begin taking a daily
+                        snapshot of your cache cluster. Example: 05:00-09:00
+                      type: string
+                    subnetGroupName:
+                      description: >-
+                        The name of the subnet group to
+                        associate with this cache cluster.
+                      type: string
+                    subnetGroupNameRefs:
+                      description: >-
+                        Reference to a SubnetGroup in elasticache
+                        to populate subnetGroupName.
+                      name:
+                        description: >-
+                          Name of the referenced object.
+                        type: string
+                      policy:
+                        description: >-
+                          Policies for referencing.
+                        resolution:
+                          description: >-
+                            Resolution specifies whether resolution of this
+                            reference is required. The default is 'Required',
+                            which means the reconcile will fail if the reference
+                            cannot be resolved. 'Optional' means this reference
+                            will be a no-op if it cannot be resolved.
+                          type: string
+                        resolve:
+                          description: >-
+                            Resolve specifies when this reference should
+                            be resolved. The default is 'IfNotPresent',
+                            which will attempt to resolve the reference
+                            only when the corresponding field is not present.
+                            Use 'Always' to resolve the reference on every
+                            reconcile.
+                          type: string
+                      type: object
+                    subnetGroupNameSelector:
+                      description: >-
+                        Selector for a SubnetGroup in elasticache
+                        to populate subnetGroupName.
+                      matchControllerRef:
+                        description: >-
+                          MatchControllerRef ensures an object with the
+                          same controller reference as the selecting object
+                          is selected.
+                        type: boolean
+                      matchLabels:
+                        description: >-
+                          MatchLabels ensures an object with
+                          matching labels is selected.
+                        type: object
+                      policy:
+                        description: >-
+                          Policies for selection.
+                        resolution:
+                          description: >-
+                            Resolution specifies whether resolution of this
+                            reference is required. The default is 'Required',
+                            which means the reconcile will fail if the
+                            reference cannot be resolved. 'Optional' means this
+                            reference will be a no-op if it cannot be resolved.
+                          type: string
+                        resolve:
+                          description: >-
+                            Resolve specifies when this reference should be
+                            resolved. The default is 'IfNotPresent', which
+                            will attempt to resolve the reference only when
+                            the corresponding field is not present. Use 'Always'
+                            to resolve the reference on every reconcile.
+                          type: string
+                      type: object
+                    tags:
+                      additionalProperties:
+                        type: string
+                      description: >-
+                        Key-value map of resource tags.
+                      type: object
+                    tagsAll:
+                      additionalProperties:
+                        type: string
+                      description: >-
+                        Map of tags assigned to the resource,
+                        including those inherited from the provider
+                        default_tags configuration block.
+                      type: object
+                    providerConfigName:
+                      description: >-
+                        Crossplane ProviderConfig to use for
+                        provisioning the resources.
+                      type: string
+                      default: default
+                  required:
+                    - deletionPolicy
+                    - region
+                  type: object
+              required:
+                - parameters
+            status:
+              properties:
+                elasticacheCluster:
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
