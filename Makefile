@@ -1,6 +1,6 @@
 # Project Setup
 PROJECT_NAME := configuration-aws-elasticache
-PROJECT_REPO := github.com/upbound/$(PROJECT_NAME)
+0ROJECT_REPO := github.com/upbound/$(PROJECT_NAME)
 
 # NOTE(hasheddan): the platform is insignificant here as Configuration package
 # images are not architecture-specific. We constrain to one platform to avoid
@@ -12,7 +12,7 @@ PLATFORMS ?= linux_amd64
 # Setup Kubernetes tools
 
 KUBECTL_VERSION = v1.27.3
-UP_VERSION = v0.24.1
+UP_VERSION = v0.28.0
 UP_CHANNEL = stable
 UPTEST_VERSION = v0.11.0
 -include build/makelib/k8s_tools.mk
@@ -33,7 +33,7 @@ XPKGS = $(PROJECT_NAME)
 -include build/makelib/xpkg.mk
 
 CROSSPLANE_NAMESPACE = upbound-system
-CROSSPLANE_ARGS = "--enable-usages,--debug"
+CROSSPLANE_ARGS = "--enable-usages"
 -include build/makelib/local.xpkg.mk
 -include build/makelib/controlplane.mk
 

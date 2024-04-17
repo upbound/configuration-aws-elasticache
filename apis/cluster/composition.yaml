@@ -24,8 +24,6 @@ spec:
             base:
               apiVersion: elasticache.aws.upbound.io/v1beta1
               kind: Cluster
-              spec:
-                forProvider: {}
             patches:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.providerConfigName
@@ -33,14 +31,12 @@ spec:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.deletionPolicy
                 toFieldPath: spec.deletionPolicy
-
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.region
                 toFieldPath: spec.forProvider.region
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.tags
                 toFieldPath: spec.forProvider.tags
-
               - type: FromCompositeFieldPath
                 fromFieldPath: metadata.uid
                 toFieldPath: spec.writeConnectionSecretToRef.name
@@ -52,7 +48,6 @@ spec:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.writeConnectionSecretToRef.namespace
                 toFieldPath: spec.writeConnectionSecretToRef.namespace
-
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.applyImmediately
                 toFieldPath: spec.forProvider.applyImmediately
@@ -140,7 +135,6 @@ spec:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.subnetGroupNameSelector
                 toFieldPath: spec.subnetGroupNameSelector
-
               - type: ToCompositeFieldPath
                 fromFieldPath: status.atProvider
                 toFieldPath: status.elasticacheCluster

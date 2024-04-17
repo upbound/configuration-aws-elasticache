@@ -58,7 +58,7 @@ status:
     lastPublishedTime: "2024-04-13T03:27:32Z"
   elasticacheCluster:
     applyImmediately: true
-    arn: arn:aws:elasticache:us-west-2:218131738736:cluster:cache-qsfmj-d4qdn
+    arn: ... MASKED ARN ...
     autoMinorVersionUpgrade: "true"
     availabilityZone: us-west-2b
     azMode: single-az

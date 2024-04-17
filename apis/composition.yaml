@@ -39,8 +39,6 @@ spec:
             base:
               apiVersion: elasticache.aws.platform.upbound.io/v1alpha1
               kind: XParameterGroup
-              spec:
-                parameters: {}
             patches:
               - type: PatchSet
                 patchSetName: common-parameters
@@ -63,7 +61,6 @@ spec:
             base:
               apiVersion: elasticache.aws.platform.upbound.io/v1alpha1
               kind: XNetwork
-              spec: {}
             patches:
               - type: PatchSet
                 patchSetName: common-parameters
