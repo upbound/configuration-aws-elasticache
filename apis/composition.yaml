@@ -42,7 +42,6 @@ spec:
             patches:
               - type: PatchSet
                 patchSetName: common-parameters
-
               - type: CombineFromComposite
                 combine:
                   variables:
@@ -52,7 +51,6 @@ spec:
                   string:
                     fmt: "%s-%s"
                 toFieldPath: spec.parameters.name
-
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.family
                 toFieldPath: spec.parameters.family
@@ -64,11 +62,9 @@ spec:
             patches:
               - type: PatchSet
                 patchSetName: common-parameters
-
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.id
                 toFieldPath: spec.parameters.id
-
               - type: ToCompositeFieldPath
                 fromFieldPath: status.elasticacheNetwork.securityGroupIds
                 toFieldPath: status.elasticacheNetwork.securityGroupIds
@@ -85,7 +81,6 @@ spec:
             patches:
               - type: PatchSet
                 patchSetName: common-parameters
-
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.engine
                 toFieldPath: spec.parameters.engine

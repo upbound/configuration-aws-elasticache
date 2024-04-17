@@ -23,8 +23,6 @@ spec:
             base:
               apiVersion: aws.platform.upbound.io/v1alpha1
               kind: XNetwork
-              spec:
-                parameters: {}
             patches:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.providerConfigName
@@ -32,14 +30,12 @@ spec:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.deletionPolicy
                 toFieldPath: spec.parameters.deletionPolicy
-
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.id
                 toFieldPath: spec.parameters.id
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.region
                 toFieldPath: spec.parameters.region
-
               - type: ToCompositeFieldPath
                 fromFieldPath: status.vpcId
                 toFieldPath: status.elasticacheNetwork.vpcId
@@ -57,8 +53,6 @@ spec:
             base:
               apiVersion: elasticache.aws.upbound.io/v1beta1
               kind: SubnetGroup
-              spec:
-                forProvider: {}
             patches:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.providerConfigName
