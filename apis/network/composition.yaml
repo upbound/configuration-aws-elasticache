@@ -69,13 +69,11 @@ spec:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.region
                 toFieldPath: spec.forProvider.region
-
               - type: FromCompositeFieldPath
                 fromFieldPath: status.elasticacheNetwork.privateSubnetIds
                 toFieldPath: spec.forProvider.subnetIds
                 policy:
                   fromFieldPath: Required
-
               - type: ToCompositeFieldPath
                 fromFieldPath: status.atProvider.arn
                 toFieldPath: status.elasticacheSubnetGroup.arn

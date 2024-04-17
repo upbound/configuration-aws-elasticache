@@ -23,8 +23,6 @@ spec:
             base:
               apiVersion: elasticache.aws.upbound.io/v1beta1
               kind: ParameterGroup
-              spec:
-                forProvider: {}
             patches:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.providerConfigName
@@ -41,7 +39,6 @@ spec:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.tagsAll
                 toFieldPath: spec.forProvider.tagsAll
-
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.description
                 toFieldPath: spec.forProvider.description
@@ -54,7 +51,6 @@ spec:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.parameters.parameter
                 toFieldPath: spec.forProvider.parameter
-
               - type: ToCompositeFieldPath
                 fromFieldPath: status.atProvider
                 toFieldPath: status.elasticacheParameterGroup
